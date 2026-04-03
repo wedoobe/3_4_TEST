@@ -4,25 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an **Odoo 19.0 website theme module**. It follows the standard Odoo module pattern and is built using XML templates, SCSS, JavaScript, and QWeb.
+This is an **Odoo 19.0 website theme module** for dierenwinkelshop.be, deployed on **Odoo.sh**. Built using XML templates, SCSS, JavaScript, and QWeb.
 
-## Running the Theme
+## Odoo.sh Deployment Workflow
 
-```bash
-./odoo-bin --addons-path=../enterprise,addons,../myprojects \
-  --db-filter=<db_name> \
-  -d <db_name> \
-  --without-demo=all \
-  -i <module_name> \
-  --dev=xml
-```
-
-Use `--dev=xml` during development to reload XML without restarting. Restart the server when changing SCSS variables.
+1. Push changes to the `main` branch on GitHub
+2. Odoo.sh detects the push and triggers a rebuild automatically
+3. If a build is stuck on an AI session, click **Rebuild** in the Odoo.sh dashboard
+4. After rebuild: go to **Apps → Dierenwinkelshop → Upgrade** in the Odoo backend
+5. **Rebuild alone is not enough** — you must also upgrade the module for XML/template changes to apply
 
 ## Module Structure
 
 ```
-<module_name>/
+website_dierenwinkelshop/
 ├── __init__.py
 ├── __manifest__.py
 ├── i18n/                         # Translation files (.po)
@@ -36,13 +31,12 @@ Use `--dev=xml` during development to reload XML without restarting. Restart the
 ├── views/
 │   ├── website_templates.xml     # Header, footer, general layout
 │   ├── website_sale_templates.xml # Shop and product page overrides
-│   ├── new_page_template_templates.xml
 │   └── snippets/
 │       ├── options.xml           # Register custom snippets in Website Builder
-│       └── s_<snippet_name>.xml  # Per-snippet templates and options
+│       └── s_<snippet_name>.xml  # Per-snippet templates
 └── static/src/
     ├── scss/
-    │   ├── primary_variables.scss      # Odoo-specific variables (colors, fonts, templates)
+    │   ├── primary_variables.scss      # Odoo-specific variables (colors, fonts)
     │   ├── bootstrap_overridden.scss   # Bootstrap variable overrides
     │   ├── theme.scss                  # General custom SCSS
     │   ├── layout/                     # header.scss, footer.scss
@@ -50,40 +44,89 @@ Use `--dev=xml` during development to reload XML without restarting. Restart the
     │   ├── snippets/                   # Per-snippet SCSS
     │   └── pages/                      # Page-specific SCSS (shop.scss, product_page.scss)
     ├── js/                             # Custom JavaScript
-    ├── img/
-    │   ├── content/                    # Images, icons, branding
-    │   ├── snippets/                   # Snippet preview images
-    │   └── wbuilder/                   # Website Builder thumbnails/illustrations
-    └── snippets/
-        └── s_<snippet_name>/
-            └── 000.scss
+    └── img/
+        ├── content/                    # Images, icons, branding
+        ├── snippets/                   # Snippet preview images
+        └── wbuilder/                   # Website Builder thumbnails
 ```
 
 ## Key Development Patterns
 
 ### SCSS Variable Priority
-1. `primary_variables.scss` — Odoo theme variables (colors, font families, header/footer template choice)
-2. `bootstrap_overridden.scss` — Bootstrap v4.6 variable overrides (typography scale, input styles, etc.)
+1. `primary_variables.scss` — Odoo theme variables (colors, font families)
+2. `bootstrap_overridden.scss` — Bootstrap variable overrides (typography, inputs, buttons)
 3. `theme.scss` / component files — Custom rules
 
-Always wrap custom SCSS rules inside `#wrapwrap` to scope them to the website only (excludes backend).
+Always wrap custom SCSS rules inside `#wrapwrap` to scope them to the website only.
 
 ### Declaring Assets in `__manifest__.py`
-All SCSS and JS files must be declared under `assets`:
+All SCSS and JS files must be declared under `assets`, all XML files under `data`:
 ```python
 'assets': {
     'web.assets_frontend': [
-        'module_name/static/src/scss/primary_variables.scss',
-        'module_name/static/src/scss/bootstrap_overridden.scss',
-        'module_name/static/src/scss/theme.scss',
-        'module_name/static/src/js/my_script.js',
+        'website_dierenwinkelshop/static/src/scss/primary_variables.scss',
+        'website_dierenwinkelshop/static/src/scss/bootstrap_overridden.scss',
+        'website_dierenwinkelshop/static/src/scss/theme.scss',
     ],
-}
+},
+'data': [
+    'data/presets.xml',
+    'views/snippets/s_mysnippet.xml',
+    'views/snippets/options.xml',
+],
 ```
-All XML files must be declared under `data`. New page templates also need a `new_page_templates` key.
+
+### Custom Building Blocks (Snippets) — Verified Working in Odoo 19
+
+Registration in `views/snippets/options.xml` requires **two XPath steps**:
+
+```xml
+<template id="snippets" inherit_id="website.snippets" name="My Snippets">
+
+    <!-- Step 1: Create a custom group tab in the snippet panel -->
+    <xpath expr="//snippets[@id='snippet_groups']/*[1]" position="before">
+        <t snippet-group="mygroupname"
+           t-snippet="website.s_snippet_group"
+           string="My Group Label"/>
+    </xpath>
+
+    <!-- Step 2: Register snippets under that group -->
+    <xpath expr="//snippets[@id='snippet_structure']/*[1]" position="before">
+        <t t-snippet="module_name.s_mysnippet"
+           string="My Snippet"
+           group="mygroupname">
+            <keywords>search keywords here</keywords>
+        </t>
+    </xpath>
+
+</template>
+```
+
+- `group` (singular) links the snippet to the group — do NOT use `groups` (plural, that is for access rights)
+- The custom group tab appears at the top of the blocks panel in the Website Builder
+- After pushing changes, always **upgrade the module** — a rebuild alone does not apply template changes
+
+### QWeb Template Rules (Odoo 19)
+
+**Do NOT use Python builtins in QWeb expressions.** These will cause a `KeyError` at render time:
+```xml
+<!-- WRONG — hasattr is not available in QWeb -->
+<header t-attf-class="#{' overlay' if hasattr(obj, 'field') and obj.field else ''}"/>
+
+<!-- CORRECT — use safe attribute access -->
+<header t-attf-class="#{' overlay' if main_object and main_object.get('field') else ''}"/>
+```
+
+### Extending eCommerce Templates (Odoo 19)
+
+XPaths that existed in older Odoo versions no longer work in Odoo 19. Always verify XPaths exist before using them. Known broken XPaths:
+- `//t[@t-set='columns']` in `website_sale.products` — does not exist in Odoo 19
+- `//div[hasclass('css_quantity')]` in `website_sale.product` — does not exist in Odoo 19
+
+When unsure, inspect the live template in Odoo's developer mode before writing XPath overrides.
 
 ### Presets (`data/presets.xml`)
-Enable or disable built-in Odoo views using `ir.ui.view` records:
+Enable or disable built-in Odoo views:
 ```xml
 <record id="website.template_header_default" model="ir.ui.view">
     <field name="active" eval="False"/>
@@ -91,52 +134,28 @@ Enable or disable built-in Odoo views using `ir.ui.view` records:
 ```
 
 ### Page Templates (`data/pages/*.xml`)
-Pages use `website.page` records with QWeb `arch`. Always call `website.layout` and set `additional_title`. Use `noupdate="1"` on navigation and page records to protect client edits during module updates.
+Use `noupdate="1"` on page and navigation records to protect client edits during upgrades.
 
 ### Extending Odoo Templates
-Use XPath to extend existing Odoo views. Organize overrides by area:
+Organize overrides by area:
 - General layout → `website_templates.xml`
 - eCommerce → `website_sale_templates.xml`
 - Blog → `website_blog_templates.xml`
 
-### Custom Building Blocks (Snippets)
-1. Create the snippet template XML in `views/snippets/s_<name>.xml`
-2. Register it in the Website Builder via XPath on `website.snippets` in `views/snippets/options.xml`
-3. Add snippet options (`we-button-group`, `we-range`, etc.) by extending `website.snippet_options`
-4. Place SCSS in `static/src/snippets/s_<name>/000.scss`
-
 ### Custom Background Shapes
-- Shape files are SVGs placed in `static/src/img/`
-- In SVG files, use colors from Odoo's **default palette** (not your theme colors) — Odoo maps them at render time
-- When applying a custom shape to a section, use `illustration/` prefix in the class instead of `web_editor/`
-
-### Gradients
-Add custom gradients to the Website Builder colorpicker by inheriting `web_editor.colorpicker` and appending to the `gradients` t-set list.
+- Use colors from Odoo's **default palette** in SVG files — Odoo maps them at render time
+- Use `illustration/` prefix in class names for custom shapes (not `web_editor/`)
 
 ### Animations
-Use Odoo animation classes on elements: `o_animate`, `o_anim_fade_in`, `o_anim_zoom_out`, `o_anim_rotate_in`, `o_anim_from_bottom`. Control timing with `animation-delay` and `--wanim-intensity` CSS variables.
-
-### Dynamic Snippets
-Custom templates for dynamic snippets (e.g., product carousels) are registered in `views/snippets/options.xml` and must match the key referenced in the page XML `data-template-key`.
-
-### eCommerce Pages
-Shop and product pages are auto-generated by `website_sale`. Customize them exclusively via XPath, presets, and SCSS — never copy-paste the full template.
+Classes: `o_animate`, `o_anim_fade_in`, `o_anim_zoom_out`, `o_anim_rotate_in`, `o_anim_from_bottom`
+Timing: `animation-delay` style and `--wanim-intensity` CSS variable
 
 ### Translations
-Export `.po` files from the backend and place them in `i18n/`. Translations must be manually imported after module installation on a new database.
+Export `.po` files from the backend, place in `i18n/`. Must be manually imported after installation on a new database.
 
 ## Dependencies
 
-Common modules to add to `depends` as features are added:
-- `website` — always required
 - `website_sale` — eCommerce/shop
-- `website_sale_wishlist` — wishlist feature
+- `website_sale_wishlist` — wishlist
 - `website_blog` — blog
-- `website_mass_mailing` — newsletter/footer subscription
-
-## Deployment
-
-Before importing to a client SaaS database:
-- Ensure `base_import_module` is installed on the target database
-- Verify all dependency modules are installed
-- Manually import translation `.po` files after installation
+- `website_mass_mailing` — newsletter (only add when actively using it)
