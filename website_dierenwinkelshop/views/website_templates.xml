@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- CUSTOM HEADER                                                 -->
+    <!-- ============================================================ -->
+    <template id="template_header_dierenwinkelshop"
+              name="Dierenwinkelshop Header"
+              inherit_id="website.layout">
+        <xpath expr="//header" position="replace">
+            <header t-attf-class="o_header_standard #{'o_header_overlay' if main_object and hasattr(main_object, 'header_overlay') and main_object.header_overlay else ''}">
+                <nav class="navbar navbar-expand-lg navbar-light bg-white">
+                    <div class="container">
+                        <!-- Logo / Brand name -->
+                        <a class="navbar-brand" href="/">
+                            <t t-if="website.logo">
+                                <img src="/web/image/website/logo"
+                                     alt="Dierenwinkelshop.be"
+                                     class="o_nav_logo"
+                                     style="max-height: 50px;"/>
+                            </t>
+                            <t t-else="">
+                                Dierenwinkelshop.be
+                            </t>
+                        </a>
+
+                        <!-- Mobile toggle -->
+                        <button class="navbar-toggler" type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#top_menu_collapse">
+                            <span class="navbar-toggler-icon"/>
+                        </button>
+
+                        <!-- Nav links -->
+                        <div class="collapse navbar-collapse" id="top_menu_collapse">
+                            <ul class="navbar-nav me-auto" id="top_menu">
+                                <t t-call="website.submenu">
+                                    <t t-set="items" t-value="website.menu_id.child_id"/>
+                                </t>
+                            </ul>
+
+                            <!-- Right side: cart + login -->
+                            <div class="d-flex align-items-center gap-3">
+                                <t t-call="website_sale.add_to_cart_notification"/>
+                                <a href="/shop/cart" class="o_wsale_my_cart position-relative">
+                                    <i class="fa fa-shopping-basket fa-lg" style="color: #2D6A4F;"/>
+                                    <span class="badge bg-success o_cart_quantity"
+                                          t-if="website.sale_get_order()"
+                                          t-esc="website.sale_get_order().cart_quantity"/>
+                                </a>
+                                <t t-call="website.placeholder_user_dropdown"/>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        </xpath>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- CUSTOM FOOTER                                                 -->
+    <!-- ============================================================ -->
+    <template id="template_footer_dierenwinkelshop"
+              name="Dierenwinkelshop Footer"
+              inherit_id="website.layout">
+        <xpath expr="//footer" position="replace">
+            <footer class="o_footer" style="background-color: #1B4332; color: #D8F3DC;">
+                <div class="container py-5">
+                    <div class="row gy-4">
+                        <!-- Brand column -->
+                        <div class="col-lg-4">
+                            <h5 class="text-white fw-bold mb-3">Dierenwinkelshop.be</h5>
+                            <p class="mb-0" style="color: #B7E4C7;">
+                                Alles voor jouw huisdier. Kwaliteitsproducten aan scherpe prijzen, snel geleverd.
+                            </p>
+                        </div>
+                        <!-- Links column -->
+                        <div class="col-lg-2">
+                            <h6 class="text-white mb-3">Winkel</h6>
+                            <ul class="list-unstyled">
+                                <li><a href="/shop" style="color: #B7E4C7;">Alle producten</a></li>
+                                <li><a href="/shop?search=hond" style="color: #B7E4C7;">Hond</a></li>
+                                <li><a href="/shop?search=kat" style="color: #B7E4C7;">Kat</a></li>
+                            </ul>
+                        </div>
+                        <!-- Info column -->
+                        <div class="col-lg-2">
+                            <h6 class="text-white mb-3">Info</h6>
+                            <ul class="list-unstyled">
+                                <li><a href="/contactus" style="color: #B7E4C7;">Contact</a></li>
+                                <li><a href="/page/privacy-policy" style="color: #B7E4C7;">Privacy</a></li>
+                            </ul>
+                        </div>
+                        <!-- Newsletter column -->
+                        <div class="col-lg-4">
+                            <h6 class="text-white mb-3">Nieuwsbrief</h6>
+                            <t t-call="website_mass_mailing.newsletter_popup_subscribe"/>
+                        </div>
+                    </div>
+                </div>
+                <!-- Copyright bar -->
+                <div class="o_footer_copyright" style="background-color: #152E23; color: #52B788;">
+                    <div class="container py-3 text-center">
+                        <span>© <span t-esc="datetime.date.today().year"/> Dierenwinkelshop.be</span>
+                    </div>
+                </div>
+            </footer>
+        </xpath>
+    </template>
+</odoo>

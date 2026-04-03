@@ -1,0 +1,29 @@
+// ============================================================
+// SHOP PAGE
+// ============================================================
+#wrapwrap {
+    // Product card
+    .o_wsale_products_grid_table {
+        .o_product_image {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .product_price {
+            color: #2D6A4F;
+            font-weight: 700;
+        }
+
+        .o_add_wishlist_dyn {
+            color: #52B788;
+        }
+    }
+
+    // Filters sidebar
+    .js_attributes {
+        .form-check-input:checked {
+            background-color: #2D6A4F;
+            border-color: #2D6A4F;
+        }
+    }
+}

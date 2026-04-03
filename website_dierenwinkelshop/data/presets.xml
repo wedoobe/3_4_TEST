@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- HEADER                                                        -->
+    <!-- ============================================================ -->
+    <!-- Disable default header -->
+    <record id="website.template_header_default" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+    <!-- Disable call-to-action button in header -->
+    <record id="website.header_call_to_action" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- FOOTER                                                        -->
+    <!-- ============================================================ -->
+    <!-- Disable default footer -->
+    <record id="website.footer_custom" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+    <!-- Enable copyright section -->
+    <record id="website.footer_no_copyright" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+</odoo>

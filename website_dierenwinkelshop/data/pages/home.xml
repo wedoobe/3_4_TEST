@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Deactivate default Odoo homepage -->
+    <record id="website.homepage" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Home page -->
+    <record id="page_home" model="website.page">
+        <field name="name">Home</field>
+        <field name="is_published" eval="True"/>
+        <field name="key">website_dierenwinkelshop.page_home</field>
+        <field name="url">/</field>
+        <field name="type">qweb</field>
+        <field name="arch" type="xml">
+            <t t-name="website_dierenwinkelshop.page_home">
+                <t t-call="website.layout">
+                    <t t-set="additional_title">Dierenwinkelshop.be | Alles voor jouw dier</t>
+                    <div id="wrap" class="oe_structure">
+                        <!-- Hero section -->
+                        <section class="s_cover o_cc o_cc1 pt80 pb80">
+                            <div class="container">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-6">
+                                        <h1 class="o_default_snippet_text">
+                                            Alles voor jouw dier
+                                        </h1>
+                                        <p class="lead o_default_snippet_text">
+                                            Ontdek ons ruim assortiment aan dierenvoeding, accessoires en verzorgingsproducten.
+                                        </p>
+                                        <a href="/shop" class="btn btn-primary btn-lg mt16">
+                                            Ontdek de winkel
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- SHOP PAGE                                                     -->
+    <!-- ============================================================ -->
+    <!-- Display 3 products per row -->
+    <template id="website_sale_products_3col"
+              inherit_id="website_sale.products"
+              name="Dierenwinkelshop - Shop 3 columns">
+        <xpath expr="//t[@t-set='columns']" position="replace">
+            <t t-set="columns" t-value="3"/>
+        </xpath>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- PRODUCT PAGE                                                  -->
+    <!-- ============================================================ -->
+    <!-- Remove quantity selector -->
+    <template id="website_sale_product_no_qty"
+              inherit_id="website_sale.product"
+              name="Dierenwinkelshop - Hide qty selector">
+        <xpath expr="//div[hasclass('css_quantity')]" position="replace"/>
+    </template>
+</odoo>

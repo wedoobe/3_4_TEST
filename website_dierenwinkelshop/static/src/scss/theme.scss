@@ -1,0 +1,50 @@
+// ============================================================
+// GENERAL THEME RULES
+// All rules scoped inside #wrapwrap to affect only the website
+// ============================================================
+#wrapwrap {
+
+    // Links
+    a {
+        color: #2D6A4F;
+        &:hover {
+            color: #1B4332;
+        }
+    }
+
+    // Primary button
+    .btn-primary {
+        background-color: #2D6A4F;
+        border-color: #2D6A4F;
+        color: #fff;
+
+        &:hover,
+        &:focus {
+            background-color: #1B4332;
+            border-color: #1B4332;
+        }
+    }
+
+    // Secondary button (outlined green)
+    .btn-secondary {
+        background-color: transparent;
+        border-color: #2D6A4F;
+        color: #2D6A4F;
+
+        &:hover,
+        &:focus {
+            background-color: #2D6A4F;
+            color: #fff;
+        }
+    }
+
+    // Section backgrounds
+    .o_cc1 { background-color: #D8F3DC; }
+    .o_cc5 { background-color: #1B4332; color: #fff; }
+
+    // Active nav underline
+    .nav-item.active > .nav-link,
+    .nav-link.active {
+        border-bottom: 2px solid #52B788;
+    }
+}

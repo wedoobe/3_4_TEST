@@ -1,0 +1,28 @@
+// ============================================================
+// HEADER
+// ============================================================
+#wrapwrap {
+    header {
+        background-color: #fff;
+        box-shadow: 0 2px 8px rgba(45, 106, 79, 0.08);
+
+        .navbar-brand {
+            font-family: 'Arvo', serif;
+            font-weight: 700;
+            color: #2D6A4F;
+            font-size: 1.4rem;
+
+            &:hover {
+                color: #1B4332;
+            }
+        }
+
+        .nav-link {
+            font-size: 0.9375rem;
+            font-weight: 400;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            transition: color 0.2s ease;
+        }
+    }
+}

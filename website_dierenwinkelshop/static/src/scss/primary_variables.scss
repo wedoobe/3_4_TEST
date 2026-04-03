@@ -1,0 +1,38 @@
+// ============================================================
+// FONTS
+// ============================================================
+$o-theme-font-urls: (
+    'Arvo': 'https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap',
+);
+
+$o-theme-fonts: (
+    'Arvo': (
+        'family': "'Arvo', serif",
+        'type': 'serif',
+    ),
+);
+
+$o-headings-font-name: 'Arvo' !default;
+$o-base-font-name: 'Arvo' !default;
+
+// ============================================================
+// COLOR PALETTE
+// ============================================================
+// Color 1: Deep forest green (primary)
+// Color 2: Fresh mid green (accent)
+// Color 3: Light mint (backgrounds)
+// Color 4: White
+// Color 5: Dark green (dark sections)
+$o-colors: (
+    'o-color-1': #2D6A4F,
+    'o-color-2': #52B788,
+    'o-color-3': #D8F3DC,
+    'o-color-4': #FFFFFF,
+    'o-color-5': #1B4332,
+) !default;
+
+// ============================================================
+// HEADER & FOOTER TEMPLATES
+// ============================================================
+$o-header-template: 'default' !default;
+$o-footer-template: 'default' !default;

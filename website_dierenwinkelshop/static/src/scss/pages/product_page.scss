@@ -1,0 +1,29 @@
+// ============================================================
+// PRODUCT PAGE
+// ============================================================
+#wrapwrap {
+    // Add to cart button
+    #add_to_cart {
+        background-color: #2D6A4F;
+        border-color: #2D6A4F;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+
+        &:hover {
+            background-color: #1B4332;
+            border-color: #1B4332;
+        }
+    }
+
+    // Product name
+    .product_detail h1 {
+        color: #1B4332;
+    }
+
+    // Price
+    .product_price .oe_price .oe_currency_value {
+        color: #2D6A4F;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+}
